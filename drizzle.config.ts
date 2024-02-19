@@ -8,5 +8,5 @@ export default {
   dbCredentials: {
     connectionString: env.DATABASE_URL,
   },
-  tablesFilter: ["t3-clerk-app-router_*"],
+  tablesFilter: ["t3-clerk_*"],
 } satisfies Config;

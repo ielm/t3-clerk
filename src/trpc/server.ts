@@ -8,23 +8,29 @@ import {
 import { callProcedure } from "@trpc/server";
 import { observable } from "@trpc/server/observable";
 import { type TRPCErrorResponse } from "@trpc/server/rpc";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
+import { NextRequest } from "next/server";
 import { cache } from "react";
 
 import { appRouter, type AppRouter } from "~/server/api/root";
 import { createTRPCContext } from "~/server/api/trpc";
 import { transformer } from "./shared";
 
+import { getAuth } from "@clerk/nextjs/server";
+
 /**
  * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when
  * handling a tRPC call from a React Server Component.
  */
 const createContext = cache(() => {
-  const heads = new Headers(headers());
-  heads.set("x-trpc-source", "rsc");
-
   return createTRPCContext({
-    headers: heads,
+    headers: new Headers({
+      cookie: cookies().toString(),
+      "x-trpc-source": "rsc",
+    }),
+    auth: getAuth(
+      new NextRequest("http://notused.com", { headers: headers() }),
+    ),
   });
 });
 
